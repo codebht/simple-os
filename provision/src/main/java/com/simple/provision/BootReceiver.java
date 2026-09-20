@@ -17,7 +17,7 @@ public class BootReceiver extends BroadcastReceiver {
         try {
             // Skip setup wizard / provisioning state.
             Settings.Global.putInt(r, Settings.Global.DEVICE_PROVISIONED, 1);
-            Settings.Secure.putInt(r, Settings.Secure.USER_SETUP_COMPLETE, 1);
+            Settings.Secure.putInt(r, "user_setup_complete", 1);
 
             // Stay awake while on AC (1) + USB (2) + wireless (4) power.
             Settings.Global.putInt(r, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 7);
