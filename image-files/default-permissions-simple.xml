@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<exceptions>
+    <exception package="com.simple.home">
+        <permission name="android.permission.READ_CALENDAR" fixed="false" />
+    </exception>
+</exceptions>
