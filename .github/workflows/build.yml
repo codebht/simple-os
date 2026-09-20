@@ -1,6 +1,7 @@
 name: build-apks
 on:
   push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
@@ -16,17 +17,29 @@ jobs:
       - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.2
-      - run: gradle :home:assembleRelease :provision:assembleRelease
-      - uses: actions/upload-artifact@v4
+      - name: Build APKs
+        run: gradle :home:assembleRelease :provision:assembleRelease
+      - name: Show built APKs
+        run: ls -lh home/build/outputs/apk/release/*.apk provision/build/outputs/apk/release/*.apk
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
           name: apks
           path: |
             home/build/outputs/apk/release/*.apk
             provision/build/outputs/apk/release/*.apk
-      - uses: softprops/action-gh-release@v2
+      - name: Upload to GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Build ${{ github.run_number }}
+          fail_on_unmatched_files: true
           files: |
             home/build/outputs/apk/release/home-release.apk
             provision/build/outputs/apk/release/provision-release.apk
+      - name: Release uploaded
+        run: |
+          echo "Uploaded to release: ${{ steps.release.outputs.url }}"
+          echo "### APKs uploaded to release build-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.release.outputs.url }}" >> $GITHUB_STEP_SUMMARY
